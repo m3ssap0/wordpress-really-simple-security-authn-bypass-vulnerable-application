@@ -83,6 +83,8 @@ Connection: keep-alive
 
 Then setting accordingly the returned session cookies in the browser.
 
+The `user_id` must be the ID of the target user, the `login_nonce` can be anything since a wrong value won't block the process.
+
 ## Authors
 
 * **Antonio Francesco Sardella** - *implementation* - [m3ssap0](https://github.com/m3ssap0)
