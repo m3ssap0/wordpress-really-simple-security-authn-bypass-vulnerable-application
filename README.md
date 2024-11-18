@@ -52,7 +52,7 @@ private function check_login_and_get_user( int $user_id, string $login_nonce ) {
 }
 ```
 
-In the caller, by the way no check was performed on the output of the `check_login_and_get_user()` function ([line 277](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L277)), but simply going further with the `authenticate_and_redirect()` function ([line 278](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L278)) using the same value received from input for the user ID.
+In the caller, by the way, no check was performed on the output of the `check_login_and_get_user()` function ([line 277](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L277)), but simply going further with the `authenticate_and_redirect()` function ([line 278](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L278)) using the same value received from input for the user ID.
 
 ```php
 public function skip_onboarding( WP_REST_Request $request ): WP_REST_Response {
