@@ -13,7 +13,6 @@ This is a vulnerable application to test the exploit for the **Really Simple Sec
 * **CVE-ID**: CVE-2024-10924
 * **Link**: [https://www.cve.org/CVERecord?id=CVE-2024-10924](https://www.cve.org/CVERecord?id=CVE-2024-10924)
 * **Description**: This makes it possible for unauthenticated attackers to log in as any existing user on the site, such as an administrator, when the "*Two-Factor Authentication*" setting is enabled (disabled by default).
-* **Vendor link**: []()
 * **Fix:** [https://plugins.trac.wordpress.org/changeset/3188431/really-simple-ssl](https://plugins.trac.wordpress.org/changeset/3188431/really-simple-ssl)
 * **Wordfence bulletin:** [https://www.wordfence.com/threat-intel/vulnerabilities/detail/really-simple-security-free-pro-and-pro-multisite-900-9111-authentication-bypass](https://www.wordfence.com/threat-intel/vulnerabilities/detail/really-simple-security-free-pro-and-pro-multisite-900-9111-authentication-bypass)
 
@@ -40,7 +39,7 @@ Having a look at the [fix](https://github.com/Really-Simple-Plugins/really-simpl
 ```php
 private function check_login_and_get_user( int $user_id, string $login_nonce ) {
     if ( ! Rsssl_Two_Fa_Authentication::verify_login_nonce( $user_id, $login_nonce ) ) {
-	    return new WP_REST_Response( array( 'error' => 'Invalid login nonce' ), 403 );
+        return new WP_REST_Response( array( 'error' => 'Invalid login nonce' ), 403 );
     }
 
     /**
@@ -53,15 +52,14 @@ private function check_login_and_get_user( int $user_id, string $login_nonce ) {
 }
 ```
 
-In the caller, by the way no check was performed on the output of the `check_login_and_get_user()` function ([line 277](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/157570bfe16a8139752c5a450b13e0858bf6d14c/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L277)), but simply going further with the `authenticate_and_redirect()` function ([line 279](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/157570bfe16a8139752c5a450b13e0858bf6d14c/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L277)).
+In the caller, by the way no check was performed on the output of the `check_login_and_get_user()` function ([line 277](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L277)), but simply going further with the `authenticate_and_redirect()` function ([line 278](https://github.com/Really-Simple-Plugins/really-simple-ssl/blob/eb1ac89afa36661bfbb1992edc930fe809a9c88d/security/wordpress/two-fa/class-rsssl-two-factor-on-board-api.php#L278)) using the same value received from input for the user ID.
 
 ```php
 public function skip_onboarding( WP_REST_Request $request ): WP_REST_Response {
-    $parameters = new Rsssl_Request_Parameters( $request );
+	$parameters = new Rsssl_Request_Parameters( $request );
 	// As a double we check the user_id with the login nonce.
-	$user = $this->check_login_and_get_user( $parameters->user_id, $parameters->login_nonce );
-
-	return $this->authenticate_and_redirect( $user->ID, $parameters->redirect_to );
+	$user = $this->check_login_and_get_user( (int)$parameters->user_id, $parameters->login_nonce );
+	return $this->authenticate_and_redirect( $parameters->user_id, $parameters->redirect_to );
 }
 ```
 
@@ -82,6 +80,8 @@ Connection: keep-alive
     "redirect_to": "/wp-admin/"
 }
 ```
+
+Then setting accordingly the returned session cookies in the browser.
 
 ## Authors
 
